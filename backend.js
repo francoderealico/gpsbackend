@@ -36,10 +36,22 @@ app.post('/api/location', async (req, res) => {
   res.status(200).send('Location saved');
 });
 // Add this to your backend server.js
+// Add this to your backend server.js
 app.get('/api/location', async (req, res) => {
   try {
     const locations = await Location.find().sort({ timestamp: -1 });
     res.json(locations);
+  } catch (err) {
+    res.status(500).send('Server error');
+  }
+});
+app.get('/api/borrartodo', async (req, res) => {
+  try {
+    const db = mongoose.connection.db;
+    await db.dropDatabase();
+
+    console.log(`Base de datos gps_tracker eliminada exitosamente.`);
+    
   } catch (err) {
     res.status(500).send('Server error');
   }
