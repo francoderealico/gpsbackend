@@ -13,10 +13,19 @@ app.use(cors(corsOptions));
 
 // MongoDB Connection
 // para docker mongoose.connect('mongodb://mongodb:27017/gps_tracker');
-mongoose.connect('mongodb://localhost:27017/gps_tracker', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+//mongoose.connect('mongodb://localhost:27017/gps_tracker', {
+ // useNewUrlParser: true,
+  //useUnifiedTopology: true,
+//});
+const uri = "mongodb+srv://francoderealico:AKUWaaP01VPOyxr7@cluster0.ynqojo9.mongodb.net/gps_tracker?retryWrites=true&w=majority&appName=Cluster0";
+const clientOptions = { serverApi: { version: '1', strict: true, deprecationErrors: true } };
+mongoose.connect(uri,clientOptions)
+.then(()=>{
+  console.log("conectado perfecto")
+})
+.catch(error =>{
+  console.error(error)
+})
 
 // Define Schema and Model
 const locationSchema = new mongoose.Schema({
