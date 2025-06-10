@@ -4,9 +4,7 @@
   "description": "envio de coordenadas",
   "main": "backend.js",
   "scripts": {
-
     "start": "node backend.js",
-	  
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Daniel",
@@ -15,6 +13,7 @@
     "body-parser": "^2.2.0",
     "cors": "^2.8.5",
     "express": "^5.1.0",
-    "mongoose": "^8.13.1"
+    "mongoose": "^8.13.1",
+    "mqtt": "^5.13.1"
   }
 }

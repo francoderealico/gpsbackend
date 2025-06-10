@@ -2,14 +2,17 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const mqtt = require('mqtt');
 
 const app = express();
-app.use(bodyParser.urlencoded({ extended: true }));
+//app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 const corsOptions = {
   origin: 'http://localhost:3001', // Your frontend URL
   optionsSuccessStatus: 200
 };
 app.use(cors(corsOptions));
+const client = mqtt.connect('tcp://test.mosquitto.org:1883');
 
 // MongoDB Connection
 // para docker mongoose.connect('mongodb://mongodb:27017/gps_tracker');
@@ -65,9 +68,25 @@ app.get('/api/borrartodo', async (req, res) => {
     res.status(500).send('Server error');
   }
 });
+        
 
 // Start Server
 const PORT = 3000;
 app.listen(PORT,'0.0.0.0', () => {
   console.log(`Server running on http://nosedonde: ${PORT}`);
+});
+
+client.on('connect', () => {
+  console.log('Connection established');
+  client.subscribe('gpslatlon/mobile');
+});
+
+client.on('message', async (topic, message) => {
+  console.log(`Message received on ${topic}: ${message.toString()}`);
+  const pirucho =JSON.parse(message);
+  const location = new Location(pirucho);
+  await location.save();
+  console.log(pirucho.lat);
+  console.log(pirucho.lon);
+  console.log(pirucho.track);
 });
