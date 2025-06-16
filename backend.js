@@ -8,8 +8,10 @@ const app = express();
 //app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 const corsOptions = {
-  origin: 'http://localhost:3001', // Your frontend URL
+  origin: ['http://localhost:3001',"http://localhost:3000"], // Your frontend URL
   optionsSuccessStatus: 200
+
+ 
 };
 app.use(cors(corsOptions));
 const client = mqtt.connect('tcp://test.mosquitto.org:1883');
@@ -38,7 +40,7 @@ const locationSchema = new mongoose.Schema({
   track: String,
 });
 
-const Location = mongoose.model('Location', locationSchema);
+const Location = mongoose.model('locations', locationSchema);
 
 // API Endpoint to Receive Data
 app.post('/api/location', async (req, res) => {
@@ -60,14 +62,56 @@ app.get('/api/location', async (req, res) => {
 app.get('/api/borrartodo', async (req, res) => {
   try {
     const db = mongoose.connection.db;
+   
     await db.dropDatabase();
 
     console.log(`Base de datos gps_tracker eliminada exitosamente.`);
-    
+    res.send("Coleccion eliminada por completo");
   } catch (err) {
     res.status(500).send('Server error');
   }
 });
+
+app.get('/api/borrarcien', async (req, res) => {
+  try {
+   
+    const cursor = await Location.find().sort({ _id: 1 }).limit(10);
+     res.json(cursor);
+    //res.send("Eliminados 100 documentos de la coleccion")
+     //while (cursor.hasNext()) {
+     //  let doc = cursor.next();
+     //  Location.deleteOne({_id: doc._id});
+     // }
+     cursor.forEach ( function(doc){
+        //const result =  Location.deleteOne({"_id": doc._id});
+        const result =  deleteLocation( doc._id);
+        console.log(doc._id);
+
+        console.log(result);
+      });
+
+  } catch (err) {
+    res.status(500).send('Server error');
+  }
+});
+
+
+async function deleteLocation(id) {
+  try {
+    const result = await Location.findByIdAndDelete(id);
+    if(result) {
+     console.log('Deleted location:', result);
+    } else {
+     console.log('Location  not found');
+    }
+  } catch (error) {
+    console.error('Error deleting location:', error);
+  }
+}
+   
+
+
+
         
 
 // Start Server

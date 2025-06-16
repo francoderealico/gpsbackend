@@ -4,7 +4,7 @@
   "description": "envio de coordenadas",
   "main": "backend.js",
   "scripts": {
-    "start": "node backend.js",
+    "start": "nodemon backend.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Daniel",
